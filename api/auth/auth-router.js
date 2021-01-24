@@ -7,20 +7,26 @@ router.post('/register', async (req, res, next) => {
   try{
     const {username, password} = req.body
     const user = await model.findByUsername({username})
+  
     console.log(username)
 
     if(user){
       return res.status(409).json({
-        message: "user already exists"
+        message: "username taken"
       })
+    }
+
+    if(!req.body.username || !req.body.password){
+      return res.status(409).json({
+        message: "username and password required"
+      })
+    
     }
 
     const newUser = await model.add({
       username,
       password: await bcrypt.hash(password, 10)
     })
-
-    console.log(newUser)
 
     res.status(201).json(newUser)
 
@@ -57,8 +63,43 @@ router.post('/register', async (req, res, next) => {
   */
 
 
-router.post('/login', (req, res) => {
-  /*
+router.post('/login', (req, res, next) => {
+  try{
+    const {username, password} = req.body
+    const current = await model.findByUsername({username})
+    console.log(username)
+
+    if(!req.body.username || !req.body.password){
+      return res.status(401).json({
+        message: "username and password required "
+      })
+    }
+    if(!current){
+      return res.status(401).json({
+        message: "invalid credentials"
+      })
+    }
+
+    const passwordValid = await bcrypt.compareSync(password, current.password)
+
+    if(!passwordValid) {
+      return res.status(401).json({
+        message: "Password incorrect"
+      })
+    }
+
+    const token = jwt.sign({
+      userId: current.id,
+    },process.env.JWT_SECRET )
+
+  }
+  catch(err){
+    next(err)
+  }
+ 
+});
+
+ /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
 
@@ -81,6 +122,5 @@ router.post('/login', (req, res) => {
     4- On FAILED login due to `username` not existing in the db, or `password` being incorrect,
       the response body should include a string exactly as follows: "invalid credentials".
   */
-});
 
 module.exports = router;
