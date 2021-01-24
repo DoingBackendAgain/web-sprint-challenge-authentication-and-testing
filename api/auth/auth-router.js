@@ -1,8 +1,28 @@
 const router = require('express').Router();
 const model = require("./auth-model")
+const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
 
 router.post('/register', async (req, res, next) => {
   try{
+    const {username, password} = req.body
+    const user = await model.findByUsername({username})
+    console.log(username)
+
+    if(user){
+      return res.status(409).json({
+        message: "user already exists"
+      })
+    }
+
+    const newUser = await model.add({
+      username,
+      password: await bcrypt.hash(password, 10)
+    })
+
+    console.log(newUser)
+
+    res.status(201).json(newUser)
 
 
   }

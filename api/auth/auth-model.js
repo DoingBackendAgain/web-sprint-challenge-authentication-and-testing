@@ -14,8 +14,8 @@ async function findByUserId(id){
 
 async function findByUsername(username){
     return db("users")
-        .select("username", "password", "id")
         .where(username)
+        .first()
 }
 
 module.exports = {
