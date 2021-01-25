@@ -14,12 +14,20 @@ async function findByUserId(id){
 
 async function findByUsername(username){
     return db("users")
+        .select("username", "password", "id")
         .where(username)
         .first()
+}
+
+ function findIT(username){
+    return db("users")
+        .select("id","username","password")
+        .where(username)
 }
 
 module.exports = {
     add,
     findByUserId,
-    findByUsername
+    findByUsername,
+    findIT
 }

@@ -29,7 +29,7 @@ function restrict(){
 
     }
     catch(err){
-      next(err)
+      
     }
   
    }

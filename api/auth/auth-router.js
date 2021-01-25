@@ -1,14 +1,15 @@
 const router = require('express').Router();
 const model = require("./auth-model")
 const bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+//const dbConfig = require('../../data/dbConfig');
 
 router.post('/register', async (req, res, next) => {
   try{
     const {username, password} = req.body
     const user = await model.findByUsername({username})
   
-    console.log(username)
+    console.log(username, password)
 
     if(user){
       return res.status(409).json({
@@ -63,17 +64,20 @@ router.post('/register', async (req, res, next) => {
   */
 
 
-router.post('/login', (req, res, next) => {
+router.post('/login', async (req, res, next) => {
   try{
     const {username, password} = req.body
-    const current = await model.findByUsername({username})
-    console.log(username)
+    const current = await model.findIT({username}).first()
+
+  
+    console.log(username, password)
 
     if(!req.body.username || !req.body.password){
       return res.status(401).json({
         message: "username and password required "
       })
     }
+
     if(!current){
       return res.status(401).json({
         message: "invalid credentials"
@@ -90,7 +94,18 @@ router.post('/login', (req, res, next) => {
 
     const token = jwt.sign({
       userId: current.id,
-    },process.env.JWT_SECRET )
+    }, "Is this not value", {expiresIn: "7d"})
+
+
+    //console.log("token:", token, "username:", username, "password:", password)
+
+    res.cookie("token:", token)
+    
+
+    res.json({
+      message: `Welcome ${current.username}`,
+      token: token
+    })
 
   }
   catch(err){
