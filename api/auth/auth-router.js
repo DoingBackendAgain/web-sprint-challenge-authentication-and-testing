@@ -67,10 +67,11 @@ router.post('/register', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
   try{
     const {username, password} = req.body
-    const current = await model.findIT({username}).first()
-
+    
+    const current = await model.findByUsername({username})
+    console.log(username)
   
-    console.log(username, password)
+    
 
     if(!req.body.username || !req.body.password){
       return res.status(401).json({
@@ -113,6 +114,8 @@ router.post('/login', async (req, res, next) => {
   }
  
 });
+
+//###### REMEMBER in insomnia to add in HEADER Content-Type and application/json #####??
 
  /*
     IMPLEMENT

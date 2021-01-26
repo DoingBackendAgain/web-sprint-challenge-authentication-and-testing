@@ -1,6 +1,6 @@
 // Write your tests here
 const supertest = require("supertest")
-const server = require("./server.js")
+const server = require("./server")
 //const db = require("../data/dbConfig")
 
 
@@ -11,8 +11,8 @@ const server = require("./server.js")
 describe("registration test", () => {
   it("posts to database", async ()=> {
     const res = await supertest(server)
-      .post("register")
-      .send({username: "Steph", password: "abc123"})
+      .post("/register")
+      .send({username: "Steph"})
       expect(res.statusCode).toBe(201)
   })
 })
