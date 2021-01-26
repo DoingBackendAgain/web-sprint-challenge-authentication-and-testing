@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const cookie = require("cookie-parser")
-//require("dotenv").config()
+const dotenv = require("dotenv").config()
 //const session = require("express-session")
 //const knexSessionStore = require("connect-session-knex")(session)
 
